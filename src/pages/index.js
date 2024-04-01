@@ -5,7 +5,6 @@ import Header  from '../components/header'
 export default function index() {
   return (
    <div>
-    <Header />
     <Home />
    </div>
   )
