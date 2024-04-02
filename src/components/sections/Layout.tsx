@@ -1,8 +1,7 @@
 import React from "react";
-import { useRouter } from "next/router";
 
 // Components
-import Header from "./header";
+import { Header } from "../index.js";
 
 const Layout = ({ children }: any) => {
   return (

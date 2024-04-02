@@ -78,7 +78,7 @@ const Input = forwardRef(
                   "placeholder-red-300": hasError,
                 }
               )}
-              onChange={() => onChange}
+              onChange={onChange}
               ref={ref}
               {...rest}
             />

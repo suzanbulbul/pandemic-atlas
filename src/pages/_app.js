@@ -2,10 +2,10 @@
 import { Toaster } from 'react-hot-toast';
 
 //Components
-import Layout from '../components/layout';
+import { Layout } from '../components/index.js';
 
 //Styles
-import '../styles/style.scss'
+import '../util/styles/style.scss'
 
 function MyApp({ Component, pageProps }) {
   return (

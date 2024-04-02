@@ -1,6 +1,7 @@
 import React from "react"
-import Home  from './Home/home'
-import Header  from '../components/header'
+
+// Components
+import Home from './Home'
 
 export default function index() {
   return (
