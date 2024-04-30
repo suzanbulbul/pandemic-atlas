@@ -1,4 +1,28 @@
 import React from "react";
+import cn from "classnames";
+
+export const ModalVariant = {
+  SUCCESS: {
+    bgLight: "bg-green-100",
+    bgColor: "bg-green-500",
+  },
+  WARNING: {
+    bgLight: "bg-yellow-100",
+    bgColor: "bg-yellow-500",
+  },
+  ERROR: {
+    bgLight: "bg-red-100",
+    bgColor: "bg-red-500",
+  },
+  DISABLED: {
+    bgLight: "bg-gray-100",
+    bgColor: "bg-gray-500",
+  },
+  DEFAULT: {
+    bgLight: "bg-blue-100",
+    bgColor: "bg-blue-500",
+  },
+};
 
 export interface ModalProps {
   show: boolean;
@@ -10,6 +34,7 @@ export interface ModalProps {
   closeTitle: string;
   saveTitle: string;
   children: React.ReactNode;
+  variant?: "SUCCESS" | "WARNING" | "ERROR" | "DEFAULT" | "DISABLED";
 }
 
 const Modal = ({
@@ -22,6 +47,7 @@ const Modal = ({
   closeTitle,
   saveTitle,
   children,
+  variant = "DEFAULT",
 }: ModalProps) => {
   if (!show) {
     return;
@@ -42,7 +68,12 @@ const Modal = ({
             <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-fullsm:mx-0 sm:h-10 sm:w-10">
-                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <div
+                    className={cn(
+                      "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10",
+                      `${ModalVariant[variant].bgLight}`
+                    )}
+                  >
                     {icon}
                   </div>
                 </div>
@@ -70,7 +101,10 @@ const Modal = ({
               <button
                 type="submit"
                 onClick={onSave}
-                className=" w-full rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3"
+                className={cn(
+                  " w-full rounded-md  px-3 py-2 text-sm font-semibold text-white shadow-sm  sm:ml-3",
+                  `${ModalVariant[variant].bgColor}`
+                )}
               >
                 {saveTitle}
               </button>
