@@ -1,9 +1,9 @@
 export interface Product {
-    name: string;
-    description: string;
-    price: number;
-    countInStock: number;
-    rating: number;
-    numReviews: number;
-    images: string[];
+   image: never;
+   id: string
+   name: string;
+   desc: string;
+   price: number;
+   count: number;
+   imageURL: string;  
   }

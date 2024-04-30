@@ -10,7 +10,7 @@ export interface CardProps {
   rating: number;
   color: string;
   numReviews: number;
-  images: string[];
+  images: string;
 }
 
 const Card = ({
@@ -24,10 +24,14 @@ const Card = ({
   images,
 }: CardProps) => {
   return (
-    <Link href={`#`}>
-      <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+    <Link className="w-full" href={`#`}>
+      <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 h-80">
         <Image
-          src={images[0]}
+          src={
+            images && images.length > 0
+              ? images
+              : "http://localhost:8080/api/file/download/product/airpods.jpg"
+          }
           alt={`${description}`}
           width={500}
           height={500}

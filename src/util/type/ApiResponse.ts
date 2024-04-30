@@ -1,5 +1,4 @@
 export interface PaginationData<T> {
-    [x: string]: any;
     content: T[];
     empty: boolean;
     first: boolean;

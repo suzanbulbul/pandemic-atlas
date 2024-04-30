@@ -1,41 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { useQuery } from "@tanstack/react-query";
+
 //Firebase
-import { uploadDataToFirestore } from "../../api/firebase";
-import { dummyData } from "../../api/dummyData";
+import {
+  uploadDataToFirestore,
+  fetchDataFromFirestore,
+} from "../../api/firebase";
 
 //Components
 import { Card, Modal, Input } from "../../components/index.js";
 
+//Toaster
+import toaster from "react-hot-toast";
+
 //Icons
 import { MdProductionQuantityLimits } from "react-icons/md";
-import { PaginationData } from "../../util/type/ApiResponse";
-import { Product } from "./home.type";
 
 const Home = () => {
   const [addProduct, setAddProduct] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [data, setData] = useState<PaginationData<Product>>(
-    {} as PaginationData<Product>
-  );
 
-  useEffect(() => {
-    if (data) {
-      setData(dummyData);
-    }
-  }, []);
+  const { isFetching, data, refetch } = useQuery<any>({
+    queryKey: ["productData"],
+    queryFn: () => fetchDataFromFirestore(),
+  });
 
   const handleImageUpload = (event: any) => {
     const file = event.target.files[0];
     setSelectedImage(file);
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { reset, register, handleSubmit } = useForm();
 
   const onSubmit = async (formData: any) => {
     if (selectedImage === null) {
@@ -43,9 +40,24 @@ const Home = () => {
     }
 
     formData.image = selectedImage;
-    uploadDataToFirestore(formData);
+
+    formData.uploadDate = new Date().toISOString();
+
+    toaster.loading(`İşlem gerçekleşiyor. Lütfen bekleyin.`);
+    uploadDataToFirestore(formData).then((res: any) => {
+      if (!res.error) {
+        toaster.dismiss();
+        refetch();
+        setAddProduct(false);
+        reset();
+        setSelectedImage(null);
+      }
+    });
   };
 
+  if (isFetching && !data) {
+    return <>Loading</>;
+  }
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -60,20 +72,20 @@ const Home = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 self-stretch">
-          {data?.content?.map((product: any) => (
+          {data.map((product: any) => (
             <div
               key={product?.id}
               className="flex p-4 flex-col items-end gap-6 w-full rounded-xl bg-white cursor-pointer"
             >
               <Card
                 title={product?.name}
-                description={product?.description}
+                description={product?.desc}
                 price={product?.price}
                 color={product?.color}
-                count={product?.countInStock}
+                count={product?.count}
                 rating={product?.rating}
                 numReviews={product?.numReviews}
-                images={product?.images}
+                images={product?.imageURL}
               />
             </div>
           ))}
@@ -81,7 +93,11 @@ const Home = () => {
       </div>
       <Modal
         show={addProduct}
-        onClose={() => setAddProduct(false)}
+        onClose={() => {
+          setAddProduct(false);
+          reset();
+          setSelectedImage(null);
+        }}
         onSave={handleSubmit(onSubmit)}
         icon={<MdProductionQuantityLimits />}
         title={"Test Modal"}
@@ -132,6 +148,7 @@ const Home = () => {
               onChange={handleImageUpload}
             />
             {selectedImage && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 width={150}
                 height={150}

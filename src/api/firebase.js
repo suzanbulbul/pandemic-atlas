@@ -1,8 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 } from 'uuid';
-
 
 //Toaster
 import  toaster  from 'react-hot-toast';
@@ -21,25 +20,54 @@ const firestore = getFirestore(app);
 const storage = getStorage(app); 
 
 export const uploadDataToFirestore = async (data) => {
+    data.uploadDate = new Date().toISOString();
+    
     const storageRef = ref(storage, `images/${data.image.name + v4()}`);
-  
-    try {
-      const snapshot = await uploadBytes(storageRef, data.image);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-  
-      // Resmin URL'sini data nesnesine ekle
-      data.imageURL = downloadURL;
-  
-      // Dosya nesnesini veriden kaldır
-      delete data.image;
-  
-      // Firestore'a ürün bilgileri ve resim URL'si ile birlikte veri ekle
-      await addDoc(collection(firestore, "products"), data);
-  
-      console.log('Data Firestore\'a başarıyla yüklendi!');
-      toaster.success('Data Firestore\'a başarıyla yüklendi!');
-    } catch (error) {
-      console.error('Firestore\'a veri yüklenirken hata oluştu: ', error);
-      toaster.error('Firestore\'a veri yüklenirken hata oluştu: ' + error.message);
-    }
-  };
+ 
+    const snapshot = await uploadBytes(storageRef, data.image);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    data.imageURL = downloadURL;
+
+    delete data.image;
+
+    const response = await addDoc(collection(firestore, "products"), data).then((res) => {
+      if (res.error) {
+        return res;
+      } else {
+        return res;
+      }
+    })
+    return response
+};
+
+export const fetchDataFromFirestore = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(firestore, "products"));
+    const data = [];
+    querySnapshot.forEach((doc) => {
+      const docData = doc.data();
+      const item = {
+        id: doc.id,
+        ...docData
+      };
+      data.push(item);
+    });
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const uploadDataToRealtimeDatabase = async (data) => {
+  try {
+    // Veri yolunu belirleyerek veriyi eklemek
+    const newDataRef = await db.ref('products').push(data);
+
+    // Başarılı yanıt döndürme
+    return { success: true, newDataRef };
+  } catch (error) {
+    // Hata durumunda hata mesajını döndürme
+    return { error: error.message };
+  }
+};
