@@ -4,11 +4,8 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-//Toaster
-import { Toaster } from 'react-hot-toast';
-
-//Components
-import { Layout } from '../components/index.js';
+//Component
+import Layout from '../components/Layout';
 
 //Styles
 import '../util/styles/style.scss'
@@ -19,8 +16,8 @@ function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
         <Layout>
+
           <Component {...pageProps} />
-          <Toaster />
           <ReactQueryDevtools initialIsOpen={false} />
 
         </Layout>

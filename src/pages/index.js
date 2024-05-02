@@ -1,12 +1,9 @@
 import React from "react"
 
-// Components
-import Home from './Home'
-
 export default function index() {
   return (
    <div>
-    <Home />
+    <h1 className="text-blue-500">Pandemic Atlas</h1>
    </div>
   )
 }
