@@ -37,3 +37,4 @@ In the styles.scss file, import Tailwind:
 It's recommended to test these libraries on a sample page before implementing them throughout the entire project.
 
 # pandemic-atlas
+# pandemic-atlas
