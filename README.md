@@ -31,10 +31,11 @@ In the styles.scss file, import Tailwind:
 ```
 
 ## ReactQueryDevtools Integration
+## react-icon Integration
 
 
 ## Note: 
 It's recommended to test these libraries on a sample page before implementing them throughout the entire project.
 
 # pandemic-atlas
-# pandemic-atlas
+
