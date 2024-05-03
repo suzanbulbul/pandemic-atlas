@@ -1,16 +1,19 @@
 import React from "react";
+import Map from "../components/Map";
 
-//Components
-import Map from '../components/Map'
+const App = () => {
+  const locations = [
+    { lng: -74.005974, lat: 40.712776 },
+    { lng: -0.127625, lat: 51.507222 },
+    { lng: 139.6917, lat: 35.6895 },
+  ];
 
-const Index = () => {
   return (
-   <div>
-    <h1 className="text-blue-500">Pandemic Atlas</h1>
-    <Map lng={32.836956} lat={39.925018} zoom={14} />
+    <div>
+      <h1 className="text-blue-500">Pandemic Atlas</h1>
+      <Map locations={locations} />
+    </div>
+  );
+};
 
-   </div>
-  )
-}
-
-export default Index;
+export default App;
