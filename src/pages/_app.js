@@ -4,6 +4,10 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+//Redux
+import { Provider } from 'react-redux'
+import store from '../redux/store';
+
 //Component
 import Layout from '../components/Layout';
 
@@ -14,14 +18,16 @@ const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }) {
   return (
-    <QueryClientProvider client={queryClient}>
-        <Layout>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+          <Layout>
 
-          <Component {...pageProps} />
-          <ReactQueryDevtools initialIsOpen={false} />
+            <Component {...pageProps} />
+            <ReactQueryDevtools initialIsOpen={false} />
 
-        </Layout>
-    </QueryClientProvider>
+          </Layout>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
