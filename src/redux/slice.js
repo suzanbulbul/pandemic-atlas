@@ -9,7 +9,7 @@ const dataSlice = createSlice({
   initialState,
   reducers: {
     fetchDataRequest: (state, action) => {
-        state.data = action.payload;
+      state.data = action.payload;
     },
   },
 });
