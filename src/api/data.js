@@ -26,7 +26,7 @@ export async function getData() {
 
 export const dummyData = [
   {
-    id: 1,
+    id: '1',
     country: "USA",
     confirmedCases: 5000000,
     deaths: 100000,
@@ -35,7 +35,7 @@ export const dummyData = [
     coordinates: { lng: -74.005974, lat: 40.712776 }
   },
   {
-    id: 2,
+    id: '2',
     country: "UK",
     confirmedCases: 3000000,
     deaths: 80000,

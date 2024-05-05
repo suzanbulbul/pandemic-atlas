@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 interface MapProps {
   locations: {
     coordinates: { lng: number; lat: number };
+    id: string;
   }[];
   width?: string;
   height?: string;
@@ -49,7 +50,7 @@ const Map = ({
         .addTo(map.current!);
 
       marker.getElement().addEventListener("click", () => {
-        router.push(`/country/${listIndex}`);
+        router.push(`/country/${locationList.id}`);
       });
     });
 
