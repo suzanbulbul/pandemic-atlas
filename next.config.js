@@ -4,6 +4,7 @@ const nextConfig = {
   swcMinify: true,
   env: {
     MAPBOX_TOKEN: process.env.MAPBOX_TOKEN,
+    API_TOKEN: process.env.API_TOKEN,
   },
 }
 
