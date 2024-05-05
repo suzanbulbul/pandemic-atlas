@@ -30,7 +30,7 @@ const App = () => {
 
   return (
     <div>
-      <Map locations={data} height="100vh" width="100vw" />
+      <Map data={data} height="100vh" width="100vw" />
     </div>
   );
 };
