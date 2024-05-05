@@ -12,7 +12,9 @@ import Map from "../components/Map";
 
 const App = () => {
   const dispatch = useDispatch();
+
   const data = useSelector(selectData);
+
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {

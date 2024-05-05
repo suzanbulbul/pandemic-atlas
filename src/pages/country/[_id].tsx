@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import Link from "next/link";
 
 //Redux
 import { selectData } from "../../redux/slice";
@@ -9,12 +9,14 @@ import { selectData } from "../../redux/slice";
 //Components
 import Map from "../../components/Map";
 
+//Library
+import CountryFlag from "react-country-flag";
+
 //Icons
-import { FaFontAwesomeFlag } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 
 //Type
-import { CountryData } from "../../util/type/data.tyope";
+import { CountryData } from "../../util/type/data.type";
 
 const CountryDetail = () => {
   const router = useRouter();
@@ -62,22 +64,28 @@ const CountryDetail = () => {
             zoom={3}
             center
           />
-          <div className="p-6 bg-white border border-gray-200 rounded-lg shadow ">
-            <FaFontAwesomeFlag className="w-7 h-7 text-gray-500 dark:text-gray-400 mb-3" />
+          <div className="p-6 flex flex-col gap-2 bg-white border border-gray-200 rounded-lg shadow">
+            <div className="flex gap-3 items-center">
+              <CountryFlag
+                style={{ width: "24px", height: "24px" }}
+                countryCode={data[0]?.countryCode}
+                svg
+              />
+              <h5 className="text-2xl font-semibold tracking-tight text-gray-900 ">
+                {data[0]?.country}
+              </h5>
+            </div>
 
-            <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 ">
-              {data[0]?.country}
-            </h5>
-            <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-400">
               Confirmed Cases: {data[0]?.confirmedCases}
             </p>
-            <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-400">
               Deaths: {data[0]?.deaths}
             </p>
-            <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-400">
               Recovered: {data[0]?.recovered}
             </p>
-            <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-400">
               Last Updated: {data[0]?.lastUpdated}
             </p>
           </div>
