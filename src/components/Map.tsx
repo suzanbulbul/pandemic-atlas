@@ -1,13 +1,15 @@
 import React, { useRef, useEffect } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
 import { useRouter } from "next/router";
 
+//Library
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+
+//Type
+import { CountryData } from "../util/type/data.type";
+
 interface MapProps {
-  locations: {
-    coordinates: { lng: number; lat: number };
-    id: string;
-  }[];
+  locations: CountryData[];
   width?: string;
   height?: string;
   zoom?: number;

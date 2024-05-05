@@ -27,6 +27,7 @@ export async function getData() {
 export const dummyData = [
   {
     id: '1',
+    countryCode: "US",
     country: "USA",
     confirmedCases: 5000000,
     deaths: 100000,
@@ -36,6 +37,7 @@ export const dummyData = [
   },
   {
     id: '2',
+    countryCode: "GB",
     country: "UK",
     confirmedCases: 3000000,
     deaths: 80000,
