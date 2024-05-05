@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // API
-import { dummyData } from '../api/data';
+import { dummyData } from "../api/data";
 
 // Redux
 import { fetchDataRequest, selectData } from "../redux/slice";
@@ -13,7 +13,7 @@ import Map from "../components/Map";
 const App = () => {
   const dispatch = useDispatch();
   const data = useSelector(selectData);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (dummyData) {
@@ -23,12 +23,12 @@ const App = () => {
   }, [dispatch]);
 
   if (loading) {
-    return 'Loading...';
+    return "Loading...";
   }
 
   return (
     <div>
-      <Map locations={data} height="100vh" width="100vw"/>
+      <Map locations={data} height="100vh" width="100vw" />
     </div>
   );
 };

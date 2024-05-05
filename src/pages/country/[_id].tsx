@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+
+//Redux
+import { selectData } from "../../redux/slice";
 
 //Components
 import Map from "../../components/Map";
@@ -8,8 +13,17 @@ import Map from "../../components/Map";
 import { FaFontAwesomeFlag } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 
+//Type
+import { CountryData } from "../../util/type/data.tyope";
+
 const CountryDetail = () => {
-  const [mapHeight, setMapHeight] = useState("auto");
+  const router = useRouter();
+  const pageId = router?.query?._id;
+  const dataList = useSelector(selectData);
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [mapHeight, setMapHeight] = useState<string>("auto");
+  const [data, setData] = useState<CountryData[]>([]);
 
   useEffect(() => {
     const remValue = parseFloat(
@@ -19,16 +33,19 @@ const CountryDetail = () => {
     setMapHeight(calculatedHeight);
   }, []);
 
-  const dummyData = [
-    {
-      country: "USA",
-      confirmedCases: 5000000,
-      deaths: 100000,
-      recovered: 3000000,
-      lastUpdated: "2024-05-03",
-      coordinates: { lng: -95.712891, lat: 37.09024 },
-    },
-  ];
+  useEffect(() => {
+    if (dataList) {
+      const pageData = dataList.find((item: any) => item.id === pageId);
+      if (pageData) {
+        setLoading(false);
+        setData([pageData]);
+      }
+    }
+  }, [pageId, dataList]);
+
+  if (loading) {
+    return "Loading...";
+  }
 
   return (
     <div>
@@ -39,7 +56,7 @@ const CountryDetail = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Map
             className="rounded-lg shadow hidden md:block"
-            locations={dummyData}
+            locations={data}
             height={mapHeight}
             width="100%"
             zoom={3}
@@ -49,19 +66,19 @@ const CountryDetail = () => {
             <FaFontAwesomeFlag className="w-7 h-7 text-gray-500 dark:text-gray-400 mb-3" />
 
             <h5 className="mb-2 text-2xl font-semibold tracking-tight text-gray-900 ">
-              {dummyData[0]?.country}
+              {data[0]?.country}
             </h5>
             <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
-              Confirmed Cases: {dummyData[0]?.confirmedCases}
+              Confirmed Cases: {data[0]?.confirmedCases}
             </p>
             <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
-              Deaths: {dummyData[0]?.deaths}
+              Deaths: {data[0]?.deaths}
             </p>
             <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
-              Recovered: {dummyData[0]?.recovered}
+              Recovered: {data[0]?.recovered}
             </p>
             <p className="mb-3 font-normal text-gray-500 dark:text-gray-400">
-              Last Updated: {dummyData[0]?.lastUpdated}
+              Last Updated: {data[0]?.lastUpdated}
             </p>
           </div>
         </div>
