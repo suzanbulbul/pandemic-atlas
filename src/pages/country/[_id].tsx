@@ -58,7 +58,7 @@ const CountryDetail = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Map
             className="rounded-lg shadow hidden md:block"
-            locations={data}
+            data={data}
             height={mapHeight}
             width="100%"
             zoom={3}
