@@ -8,6 +8,7 @@ import { selectData } from "../../redux/slice";
 
 //Library
 import CountryFlag from "react-country-flag";
+import { countryToAlpha2 } from "country-to-iso";
 
 //Components
 import Chart from "../../components/Chart";
@@ -16,8 +17,8 @@ import Divider from "../../components/Divider";
 //Icons
 import { FaArrowLeft } from "react-icons/fa";
 
-//Type && Helper
-import { CountryData, getCountryCode } from "../../util";
+//Type
+import { CountryData } from "../../util";
 
 const CountryDetail = () => {
   const router = useRouter();
@@ -65,7 +66,7 @@ const CountryDetail = () => {
               <div className="flex items-center gap-3 ">
                 <CountryFlag
                   style={{ width: "24px", height: "24px" }}
-                  countryCode={getCountryCode(data[0]?.country)}
+                  countryCode={countryToAlpha2(data[0]?.country) as any}
                   svg
                 />
                 <h1 className="text-2xl font-semibold text-white">
