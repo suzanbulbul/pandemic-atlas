@@ -11,7 +11,7 @@ import { getData } from "../api/data";
 import { fetchDataRequest, selectData } from "../redux/slice";
 
 //Components
-import Map from "../components/Map";
+import { Map, Loading } from "../components";
 
 //Type
 import { CountryData } from "../util";
@@ -31,6 +31,10 @@ const App = () => {
       dispatch(fetchDataRequest(data));
     }
   }, [data, dispatch]);
+
+  if (!data) {
+    return <Loading />;
+  }
 
   return (
     <div>

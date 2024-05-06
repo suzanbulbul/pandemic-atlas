@@ -11,9 +11,7 @@ import CountryFlag from "react-country-flag";
 import { countryToAlpha2 } from "country-to-iso";
 
 //Components
-import Chart from "../../components/Chart";
-import Divider from "../../components/Divider";
-
+import { Chart, Divider, Loading } from "../../components";
 //Icons
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -49,10 +47,9 @@ const CountryDetail = () => {
     }
   }, [pageId, dataList]);
 
-  if (loading) {
-    return "Loading...";
+  if (!data) {
+    return <Loading />;
   }
-
   return (
     <div>
       <div className="bg-gradient-to-r from-rose-950 via-zinc-950 to-zinc-950 h-screen p-3">
