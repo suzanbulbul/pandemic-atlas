@@ -8,6 +8,7 @@ import { selectData } from "../../redux/slice";
 
 //Components
 import Map from "../../components/Map";
+import Chart from "../../components/Chart";
 
 //Library
 import CountryFlag from "react-country-flag";
@@ -26,6 +27,11 @@ const CountryDetail = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [mapHeight, setMapHeight] = useState<string>("auto");
   const [data, setData] = useState<CountryData[]>([]);
+  const [chartData, setChartData] = useState<{
+    label: string;
+    confirmedCases: number;
+    deaths: number;
+  }>();
 
   useEffect(() => {
     const remValue = parseFloat(
@@ -42,6 +48,11 @@ const CountryDetail = () => {
         setLoading(false);
         setData([pageData]);
       }
+      setChartData({
+        label: pageData?.country || "",
+        confirmedCases: pageData?.confirmedCases || 0,
+        deaths: pageData?.deaths || 0,
+      });
     }
   }, [pageId, dataList]);
 
@@ -75,7 +86,6 @@ const CountryDetail = () => {
                 {data[0]?.country}
               </h5>
             </div>
-
             <p className="text-gray-500 dark:text-gray-400">
               Confirmed Cases: {data[0]?.confirmedCases}
             </p>
@@ -88,6 +98,7 @@ const CountryDetail = () => {
             <p className="text-gray-500 dark:text-gray-400">
               Last Updated: {data[0]?.lastUpdated}
             </p>
+            {chartData && <Chart data={chartData} />}
           </div>
         </div>
       </div>

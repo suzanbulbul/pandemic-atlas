@@ -1,11 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import { useRouter } from "next/router";
-import ReactDOM from "react-dom";
 
 // Library
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import CountryFlag from "react-country-flag";
 
 // Type
 import { CountryData } from "../util/type/data.type";
