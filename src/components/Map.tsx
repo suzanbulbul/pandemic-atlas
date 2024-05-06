@@ -1,19 +1,17 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 // Library
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-// Type
-import { CountryData } from "../util/type/data.type";
+//Type && Helper
+import { CountryData, getCountryCode } from "../util";
 
 interface MapProps {
   data: CountryData[];
   width?: string;
   height?: string;
-  zoom?: number;
-  center?: boolean;
   className?: string;
 }
 
@@ -21,12 +19,13 @@ const Map = ({
   data,
   width = "100%",
   height = "400px",
-  zoom = 1,
-  center = false,
   className,
 }: MapProps) => {
   mapboxgl.accessToken = process.env.MAPBOX_TOKEN as string;
 
+  const [coordinates, setCoordinates] = useState<{
+    [key: string]: [number, number];
+  }>({});
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const router = useRouter();
@@ -36,21 +35,38 @@ const Map = ({
       map.current = new mapboxgl.Map({
         container: mapContainer.current!,
         style: "mapbox://styles/mapbox/standard",
-        center: center
-          ? [data[0].coordinates.lng, data[0].coordinates.lat]
-          : [0, 30],
-        zoom: zoom,
+        center: [0, 30],
+        zoom: 2,
       });
     }
 
-    data.forEach((location, listIndex) => {
-      const { coordinates } = location;
-      const { lng, lat } = coordinates;
+    const updatedCoordinates: { [key: string]: [number, number] } = {};
 
+    data.forEach((location) => {
+      fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${location.country}.json?access_token=${process.env.MAPBOX_TOKEN}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          const [longitude, latitude] = data.features[0].center;
+          updatedCoordinates[location.country] = [longitude, latitude];
+          setCoordinates(updatedCoordinates);
+        })
+        .catch((error) => console.error("Error fetching coordinates:", error));
+    });
+  }, [data]);
+
+  useEffect(() => {
+    if (!map.current || !coordinates) return;
+
+    const markers: mapboxgl.Marker[] = [];
+
+    Object.entries(coordinates).forEach(([country, coords]) => {
+      const [lng, lat] = coords;
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: false,
-      }).setText(`Country: ${location.id}`);
+      }).setText(`Country: ${country}`);
 
       const marker = new mapboxgl.Marker()
         .setLngLat([lng, lat])
@@ -72,55 +88,67 @@ const Map = ({
         const container = document.createElement("div");
         container.className = "flex flex-col gap-4";
 
-        const flag = document.createElement("img");
-        flag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${location.countryCode.toLowerCase()}.svg`;
-        flag.className = "w-full";
+        const location = data.find((item) => item.country === country);
 
-        const country = document.createElement("h5");
-        country.className =
-          "text-2xl font-semibold tracking-tight text-gray-900 ";
-        country.innerHTML = `${location.country}`;
+        if (location) {
+          const countryCode = getCountryCode(location.country);
 
-        const confirmedCases = document.createElement("p");
-        confirmedCases.className = " text-base text-black-500 ";
-        confirmedCases.innerHTML = `Cases: ${location.confirmedCases}`;
+          if (countryCode) {
+            const flag = document.createElement("img");
+            flag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${countryCode.toLowerCase()}.svg`;
+            flag.className = "w-full";
+            container.appendChild(flag);
+          }
 
-        const deaths = document.createElement("p");
-        deaths.className = " text-base text-red-500 ";
-        deaths.innerHTML = `Deaths: ${location.deaths}`;
+          const countryElement = document.createElement("h5");
+          countryElement.className =
+            "text-2xl font-semibold tracking-tight text-gray-900 ";
+          countryElement.innerHTML = `${location.country}`;
+          const confirmedCases = document.createElement("p");
+          confirmedCases.className = " text-base text-black-500 ";
+          confirmedCases.innerHTML = `Cases: ${
+            location.cases.total ? location.cases.total : "-"
+          }`;
 
-        const recovered = document.createElement("p");
-        recovered.className = " text-base text-green-500";
-        recovered.innerHTML = `Recovered: ${location.recovered}`;
+          const deaths = document.createElement("p");
+          deaths.className = " text-base text-red-500 ";
+          deaths.innerHTML = `Deaths: ${
+            location.deaths.total ? location.deaths.total : "-"
+          }`;
 
-        const moreInfoButton = document.createElement("button");
-        moreInfoButton.className =
-          "bg-rose-900 text-white font-bold py-2 px-4 rounded";
-        moreInfoButton.textContent = "Wiew More Data";
-        moreInfoButton.classList.add("more-info-button");
+          const recovered = document.createElement("p");
+          recovered.className = " text-base text-green-500";
+          recovered.innerHTML = `Recovered: ${
+            location.cases.recovered ? location.cases.recovered : "-"
+          }`;
 
-        moreInfoButton.addEventListener("click", () => {
-          router.push(`/country/${location.id}`);
-        });
+          const moreInfoButton = document.createElement("button");
+          moreInfoButton.className =
+            "bg-rose-900 text-white font-bold py-2 px-4 rounded";
+          moreInfoButton.textContent = "View More Data";
+          moreInfoButton.classList.add("more-info-button");
 
-        container.appendChild(flag);
-        container.appendChild(country);
-        container.appendChild(confirmedCases);
-        container.appendChild(deaths);
-        container.appendChild(recovered);
-        container.appendChild(moreInfoButton);
+          moreInfoButton.addEventListener("click", () => {
+            router.push(`/country/${location.country}`);
+          });
 
-        popup.setDOMContent(container);
+          container.appendChild(countryElement);
+          container.appendChild(confirmedCases);
+          container.appendChild(deaths);
+          container.appendChild(recovered);
+          container.appendChild(moreInfoButton);
+
+          popup.setDOMContent(container);
+        }
       });
+
+      markers.push(marker);
     });
 
     return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
-      }
+      markers.forEach((marker) => marker.remove());
     };
-  }, [data]);
+  }, [coordinates]);
 
   return (
     <div ref={mapContainer} className={className} style={{ width, height }} />

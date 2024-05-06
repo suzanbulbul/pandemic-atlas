@@ -6,18 +6,18 @@ import Link from "next/link";
 //Redux
 import { selectData } from "../../redux/slice";
 
+//Library
+import CountryFlag from "react-country-flag";
+
 //Components
 import Chart from "../../components/Chart";
 import Divider from "../../components/Divider";
 
-//Library
-import CountryFlag from "react-country-flag";
-
 //Icons
 import { FaArrowLeft } from "react-icons/fa";
 
-//Type
-import { CountryData } from "../../util/type/data.type";
+//Type && Helper
+import { CountryData, getCountryCode } from "../../util";
 
 const CountryDetail = () => {
   const router = useRouter();
@@ -34,15 +34,16 @@ const CountryDetail = () => {
 
   useEffect(() => {
     if (dataList) {
-      const pageData = dataList.find((item: any) => item.id === pageId);
+      const pageData = dataList.find((item: any) => item.country === pageId);
+
       if (pageData) {
         setLoading(false);
         setData([pageData]);
       }
       setChartData({
         label: pageData?.country || "",
-        confirmedCases: pageData?.confirmedCases || 0,
-        deaths: pageData?.deaths || 0,
+        confirmedCases: pageData?.cases.total || 0,
+        deaths: pageData?.deaths.total || 0,
       });
     }
   }, [pageId, dataList]);
@@ -60,11 +61,11 @@ const CountryDetail = () => {
         </Link>
         <div className="sm:w-6/12 w-full mx-auto mt-12 ">
           <div className="flex flex-col gap-10 items-center justify-center">
-            <div className="flex flex-col gap-2">
-              <div className="flex  justify-center gap-3 ">
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center gap-3 ">
                 <CountryFlag
                   style={{ width: "24px", height: "24px" }}
-                  countryCode={data[0]?.countryCode}
+                  countryCode={getCountryCode(data[0]?.country)}
                   svg
                 />
                 <h1 className="text-2xl font-semibold text-white">
@@ -78,19 +79,19 @@ const CountryDetail = () => {
               <div className="flex justify-around items-start">
                 <div className="flex flex-col">
                   <h1 className="text-lg font-bold text-yellow-500">
-                    {data[0]?.confirmedCases}
+                    {data[0]?.cases.total ? data[0]?.cases.total : "-"}
                   </h1>
                   <label className="text-sm font-thin text-white">cases</label>
                 </div>
                 <div className="flex flex-col">
                   <h1 className="text-lg font-bold text-red-500">
-                    {data[0]?.deaths}
+                    {data[0]?.deaths.total ? data[0]?.deaths.total : "-"}
                   </h1>
                   <label className="text-sm font-thin text-white">deaths</label>
                 </div>
                 <div className="flex flex-col">
                   <h1 className="text-lg font-bold text-green-500">
-                    {data[0]?.recovered}
+                    {data[0]?.cases.recovered ? data[0]?.cases.recovered : "-"}
                   </h1>
                   <label className="text-sm font-thin text-white">
                     recovered

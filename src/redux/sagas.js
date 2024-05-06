@@ -1,17 +1,16 @@
 import { takeLatest, put } from 'redux-saga/effects';
-import { fetchDataRequest } from './slice'; 
+import { fetchDataRequest } from './slice';
+import { getData } from '../api/data'; 
 
-import { dummyData } from '../api/data'; 
-
-function* fetchData() {
+function* fetchDataSaga() {
   try {
-    const response = dummyData; 
-    yield put(fetchDataRequest(response));
+    const data = yield getData()
+    yield put(fetchDataRequest(data));
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 }
 
 export default function* rootSaga() {
-  yield takeLatest('FETCH_DATA', fetchData);
+  yield takeLatest('FETCH_DATA', fetchDataSaga)
 }
