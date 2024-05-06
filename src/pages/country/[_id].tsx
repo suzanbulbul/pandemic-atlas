@@ -7,8 +7,8 @@ import Link from "next/link";
 import { selectData } from "../../redux/slice";
 
 //Components
-import Map from "../../components/Map";
 import Chart from "../../components/Chart";
+import Divider from "../../components/Divider";
 
 //Library
 import CountryFlag from "react-country-flag";
@@ -25,21 +25,12 @@ const CountryDetail = () => {
   const dataList = useSelector(selectData);
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [mapHeight, setMapHeight] = useState<string>("auto");
   const [data, setData] = useState<CountryData[]>([]);
   const [chartData, setChartData] = useState<{
     label: string;
     confirmedCases: number;
     deaths: number;
   }>();
-
-  useEffect(() => {
-    const remValue = parseFloat(
-      getComputedStyle(document.documentElement).fontSize
-    );
-    const calculatedHeight = `calc(100vh - ${2 * remValue}px - 2rem)`;
-    setMapHeight(calculatedHeight);
-  }, []);
 
   useEffect(() => {
     if (dataList) {
@@ -62,43 +53,68 @@ const CountryDetail = () => {
 
   return (
     <div>
-      <div className="container mx-auto">
-        <Link href="/">
-          <FaArrowLeft className="w-7 h-7 text-gray-500 dark:text-gray-400 my-3" />
+      <div className="bg-gradient-to-r from-rose-950 via-zinc-950 to-zinc-950 h-screen p-3">
+        <Link href="/" className="flex items-center gap-2 text-md text-white">
+          <FaArrowLeft className="w-5 h-5" />
+          Go Back
         </Link>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Map
-            className="rounded-lg shadow hidden md:block"
-            data={data}
-            height={mapHeight}
-            width="100%"
-            zoom={3}
-            center
-          />
-          <div className="p-6 flex flex-col gap-2 bg-white border border-gray-200 rounded-lg shadow">
-            <div className="flex gap-3 items-center">
-              <CountryFlag
-                style={{ width: "24px", height: "24px" }}
-                countryCode={data[0]?.countryCode}
-                svg
-              />
-              <h5 className="text-2xl font-semibold tracking-tight text-gray-900 ">
-                {data[0]?.country}
-              </h5>
+        <div className="sm:w-6/12 w-full mx-auto mt-12 ">
+          <div className="flex flex-col gap-10 items-center justify-center">
+            <div className="flex flex-col gap-2">
+              <div className="flex  justify-center gap-3 ">
+                <CountryFlag
+                  style={{ width: "24px", height: "24px" }}
+                  countryCode={data[0]?.countryCode}
+                  svg
+                />
+                <h1 className="text-2xl font-semibold text-white">
+                  {data[0]?.country}
+                </h1>
+              </div>
+              <label className="text-white">COVID-19 Status</label>
             </div>
-            <p className="text-gray-500 dark:text-gray-400">
-              Confirmed Cases: {data[0]?.confirmedCases}
-            </p>
-            <p className="text-gray-500 dark:text-gray-400">
-              Deaths: {data[0]?.deaths}
-            </p>
-            <p className="text-gray-500 dark:text-gray-400">
-              Recovered: {data[0]?.recovered}
-            </p>
-            <p className="text-gray-500 dark:text-gray-400">
-              Last Updated: {data[0]?.lastUpdated}
-            </p>
-            {chartData && <Chart data={chartData} />}
+            <div className="flex flex-col text-center gap-2 w-full">
+              <h2 className="text-white">Overview</h2>
+              <div className="flex justify-around items-start">
+                <div className="flex flex-col">
+                  <h1 className="text-lg font-bold text-yellow-500">
+                    {data[0]?.confirmedCases}
+                  </h1>
+                  <label className="text-sm font-thin text-white">cases</label>
+                </div>
+                <div className="flex flex-col">
+                  <h1 className="text-lg font-bold text-red-500">
+                    {data[0]?.deaths}
+                  </h1>
+                  <label className="text-sm font-thin text-white">deaths</label>
+                </div>
+                <div className="flex flex-col">
+                  <h1 className="text-lg font-bold text-green-500">
+                    {data[0]?.recovered}
+                  </h1>
+                  <label className="text-sm font-thin text-white">
+                    recovered
+                  </label>
+                </div>
+              </div>
+            </div>
+            <Divider />
+            <div className="flex flex-col gap-10 items-center">
+              <div className="text-center">
+                <h2 className="text-white">Cases</h2>
+                <p className="text-gray-500">
+                  per million people in {data[0]?.country}
+                </p>
+              </div>
+              {chartData && <Chart data={chartData} />}
+            </div>
+            <Divider />
+            <div className="text-center">
+              <h2 className="text-white">Trends</h2>
+              <p className="text-gray-500">
+                No accurate data for {data[0]?.country} is available right
+              </p>
+            </div>
           </div>
         </div>
       </div>
