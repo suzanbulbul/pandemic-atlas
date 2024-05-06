@@ -92,6 +92,9 @@ const Map = ({
 
         if (location) {
           const countryCode = getCountryCode(location.country);
+          const continentCode = getCountryCode(location.continent);
+
+          console.log(location.continent, location.country);
 
           if (countryCode) {
             const flag = document.createElement("img");
@@ -148,7 +151,7 @@ const Map = ({
     return () => {
       markers.forEach((marker) => marker.remove());
     };
-  }, [coordinates]);
+  }, [coordinates, data, router]);
 
   return (
     <div ref={mapContainer} className={className} style={{ width, height }} />

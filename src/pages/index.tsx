@@ -30,7 +30,7 @@ const App = () => {
     if (data) {
       dispatch(fetchDataRequest(data));
     }
-  }, []);
+  }, [data, dispatch]);
 
   return (
     <div>
