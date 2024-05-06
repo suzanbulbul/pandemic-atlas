@@ -4,9 +4,10 @@ import { useRouter } from "next/router";
 // Library
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { countryToAlpha2 } from "country-to-iso";
 
-//Type && Helper
-import { CountryData, getCountryCode } from "../util";
+//Type
+import { CountryData } from "../util";
 
 interface MapProps {
   data: CountryData[];
@@ -91,11 +92,7 @@ const Map = ({
         const location = data.find((item) => item.country === country);
 
         if (location) {
-          const countryCode = getCountryCode(location.country);
-          const continentCode = getCountryCode(location.continent);
-
-          console.log(location.continent, location.country);
-
+          const countryCode = countryToAlpha2(location.country);
           if (countryCode) {
             const flag = document.createElement("img");
             flag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${countryCode.toLowerCase()}.svg`;
