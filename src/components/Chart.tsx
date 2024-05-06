@@ -1,6 +1,8 @@
 import React from "react";
+
+//Library
 import { Doughnut } from "react-chartjs-2";
-import { Chart, ArcElement, Tooltip, TooltipModel } from "chart.js";
+import { Chart, ArcElement, Tooltip } from "chart.js";
 
 Chart.register(ArcElement, Tooltip);
 
@@ -13,7 +15,6 @@ export interface DoughnutChartProps {
 }
 
 const DoughnutChart = ({ data }: DoughnutChartProps) => {
-  console.log(data);
   const chartData = {
     labels: ["Confirmed Cases", "Deaths"],
     datasets: [

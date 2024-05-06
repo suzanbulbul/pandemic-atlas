@@ -1,36 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-// API
-import { dummyData } from "../api/data";
+//Hook
+import { useQuery } from "@tanstack/react-query";
 
-// Redux
+//API
+import { getData } from "../api/data";
+
+//Redux
 import { fetchDataRequest, selectData } from "../redux/slice";
 
-// Components
+//Components
 import Map from "../components/Map";
+
+//Type
+import { CountryData } from "../util";
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const data = useSelector(selectData);
+  const counrtyData = useSelector(selectData);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const { data } = useQuery<CountryData[]>({
+    queryKey: ["counrtyData"],
+    queryFn: () => getData(),
+  });
 
   useEffect(() => {
-    if (dummyData) {
-      setLoading(false);
-      dispatch(fetchDataRequest(dummyData));
+    if (data) {
+      dispatch(fetchDataRequest(data));
     }
-  }, [dispatch]);
-
-  if (loading) {
-    return "Loading...";
-  }
+  }, []);
 
   return (
     <div>
-      <Map data={data} height="100vh" width="100vw" />
+      <Map data={counrtyData} height="100vh" width="100vw" />
     </div>
   );
 };

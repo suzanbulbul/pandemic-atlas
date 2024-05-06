@@ -1,16 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+
 // Library
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-// Type
-import { CountryData } from "../util/type/data.type";
+
+//Type && Helper
+import { CountryData, getCountryCode } from "../util";
 
 interface MapProps {
   data: CountryData[];
   width?: string;
   height?: string;
-  center?: boolean;
   className?: string;
 }
 
@@ -39,6 +40,8 @@ const Map = ({
       });
     }
 
+    const updatedCoordinates: { [key: string]: [number, number] } = {};
+
     data.forEach((location) => {
       fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${location.country}.json?access_token=${process.env.MAPBOX_TOKEN}`
@@ -46,33 +49,24 @@ const Map = ({
         .then((response) => response.json())
         .then((data) => {
           const [longitude, latitude] = data.features[0].center;
-          setCoordinates((prevCoordinates) => ({
-            ...prevCoordinates,
-            [location.id]: [longitude, latitude],
-          }));
+          updatedCoordinates[location.country] = [longitude, latitude];
+          setCoordinates(updatedCoordinates);
         })
         .catch((error) => console.error("Error fetching coordinates:", error));
     });
-
-    return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
-      }
-    };
   }, [data]);
 
   useEffect(() => {
-    if (!map.current) return;
+    if (!map.current || !coordinates) return;
 
     const markers: mapboxgl.Marker[] = [];
 
-    Object.entries(coordinates).forEach(([id, coords]) => {
+    Object.entries(coordinates).forEach(([country, coords]) => {
       const [lng, lat] = coords;
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: false,
-      }).setText(`Country: ${id}`);
+      }).setText(`Country: ${country}`);
 
       const marker = new mapboxgl.Marker()
         .setLngLat([lng, lat])
@@ -94,41 +88,51 @@ const Map = ({
         const container = document.createElement("div");
         container.className = "flex flex-col gap-4";
 
-        const location = data.find((item) => item.id === id);
+        const location = data.find((item) => item.country === country);
 
         if (location) {
-          const flag = document.createElement("img");
-          flag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${location.countryCode.toLowerCase()}.svg`;
-          flag.className = "w-full";
+          const countryCode = getCountryCode(location.country);
 
-          const country = document.createElement("h5");
-          country.className =
+          if (countryCode) {
+            const flag = document.createElement("img");
+            flag.src = `https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${countryCode.toLowerCase()}.svg`;
+            flag.className = "w-full";
+            container.appendChild(flag);
+          }
+
+          const countryElement = document.createElement("h5");
+          countryElement.className =
             "text-2xl font-semibold tracking-tight text-gray-900 ";
-          country.innerHTML = `${location.country}`;
+          countryElement.innerHTML = `${location.country}`;
           const confirmedCases = document.createElement("p");
           confirmedCases.className = " text-base text-black-500 ";
-          confirmedCases.innerHTML = `Cases: ${location.confirmedCases}`;
+          confirmedCases.innerHTML = `Cases: ${
+            location.cases.total ? location.cases.total : "-"
+          }`;
 
           const deaths = document.createElement("p");
           deaths.className = " text-base text-red-500 ";
-          deaths.innerHTML = `Deaths: ${location.deaths}`;
+          deaths.innerHTML = `Deaths: ${
+            location.deaths.total ? location.deaths.total : "-"
+          }`;
 
           const recovered = document.createElement("p");
           recovered.className = " text-base text-green-500";
-          recovered.innerHTML = `Recovered: ${location.recovered}`;
+          recovered.innerHTML = `Recovered: ${
+            location.cases.recovered ? location.cases.recovered : "-"
+          }`;
 
           const moreInfoButton = document.createElement("button");
           moreInfoButton.className =
             "bg-rose-900 text-white font-bold py-2 px-4 rounded";
-          moreInfoButton.textContent = "Wiew More Data";
+          moreInfoButton.textContent = "View More Data";
           moreInfoButton.classList.add("more-info-button");
 
           moreInfoButton.addEventListener("click", () => {
-            router.push(`/country/${location.id}`);
+            router.push(`/country/${location.country}`);
           });
 
-          container.appendChild(flag);
-          container.appendChild(country);
+          container.appendChild(countryElement);
           container.appendChild(confirmedCases);
           container.appendChild(deaths);
           container.appendChild(recovered);

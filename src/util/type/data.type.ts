@@ -1,10 +1,25 @@
 export interface CountryData {
-    id: string;
-    countryCode: string;
+    continent: string;
     country: string;
-    confirmedCases: number;
-    deaths: number;
-    recovered: number;
-    lastUpdated: string;
-    coordinates: { lng: number; lat: number };
+    population: number;
+    cases: {
+      new: null | number;
+      active: number;
+      critical: number;
+      recovered: number;
+      "1M_pop": string;
+      total: number;
+    };
+    deaths: {
+      new: null | number;
+      "1M_pop": string;
+      total: number;
+    };
+    tests: {
+      "1M_pop": string;
+      total: number;
+    };
+    day: string;
+    time: string;
 }
+
