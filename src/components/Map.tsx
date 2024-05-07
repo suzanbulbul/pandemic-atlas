@@ -43,18 +43,21 @@ const Map = ({
 
     const updatedCoordinates: { [key: string]: [number, number] } = {};
 
-    data && data.forEach((location) => {
-      fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${location.country}.json?access_token=${process.env.MAPBOX_TOKEN}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          const [longitude, latitude] = data.features[0].center;
-          updatedCoordinates[location.country] = [longitude, latitude];
-          setCoordinates(updatedCoordinates);
-        })
-        .catch((error) => console.error("Error fetching coordinates:", error));
-    });
+    data &&
+      data.forEach((location) => {
+        fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${location.country}.json?access_token=${process.env.MAPBOX_TOKEN}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            const [longitude, latitude] = data.features[0].center;
+            updatedCoordinates[location.country] = [longitude, latitude];
+            setCoordinates(updatedCoordinates);
+          })
+          .catch((error) =>
+            console.error("Error fetching coordinates:", error)
+          );
+      });
   }, [data]);
 
   useEffect(() => {
@@ -76,7 +79,7 @@ const Map = ({
 
       marker.getElement().addEventListener("click", () => {
         map.current!.flyTo({
-          center: [lng, lat],
+          center: [lng, lat - 2],
           zoom: 5,
           speed: 1.5,
           curve: 1,
