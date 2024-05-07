@@ -52,7 +52,7 @@ const CountryDetail = () => {
   }
   return (
     <div>
-      <div className="bg-gradient-to-r from-rose-950 via-zinc-950 to-zinc-950 h-screen p-3">
+      <div className="bg-gradient-to-r from-rose-950 via-zinc-950 to-zinc-950 sm:h-screen h-full p-3">
         <Link href="/" className="flex items-center gap-2 text-md text-white">
           <FaArrowLeft className="w-5 h-5" />
           Go Back
