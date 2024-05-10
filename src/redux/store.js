@@ -1,5 +1,4 @@
-// store.js
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import dataReducer from './slice';
 import rootSaga from './sagas';

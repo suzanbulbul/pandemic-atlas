@@ -9,9 +9,11 @@ import { selectData } from "../../redux/slice";
 //Library
 import CountryFlag from "react-country-flag";
 import { countryToAlpha2 } from "country-to-iso";
+import dayjs from "dayjs";
 
 //Components
 import { Chart, Divider, Loading } from "../../components";
+
 //Icons
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -47,16 +49,22 @@ const CountryDetail = () => {
     }
   }, [pageId, dataList]);
 
-  if (!data) {
+  if (loading) {
     return <Loading />;
   }
+
   return (
     <div>
       <div className="bg-gradient-to-r from-rose-950 via-zinc-950 to-zinc-950  min-h-screen p-3">
-        <Link href="/" className="flex items-center gap-2 text-md text-white">
-          <FaArrowLeft className="w-5 h-5" />
-          Go Back
-        </Link>
+        <div className="flex justify-between items-start">
+          <Link href="/" className="flex items-center gap-2 text-md text-white">
+            <FaArrowLeft className="w-5 h-5" />
+            Go Back
+          </Link>
+          <p className="flex items-center gap-2 text-md text-white">
+            {dayjs(data[0]?.day).format("DD.MM.YYYY")}
+          </p>
+        </div>
         <div className="sm:w-6/12 w-full mx-auto mt-12 ">
           <div className="flex flex-col gap-10 items-center justify-center">
             <div className="flex flex-col items-center gap-2">
